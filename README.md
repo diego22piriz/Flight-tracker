@@ -25,8 +25,6 @@ Aplicación **RIA** de laboratorio para consultar y rastrear vuelos en tiempo re
 | **Cursor Rules** (`.cursor/rules/`) | Modos PLAN/ACT y guía del memory bank |
 | Registro manual | Carpeta `prompts/` con prompts relevantes |
 
-> Declaración explícita exigida por el enunciado: se usó **Cursor** como asistente de desarrollo. Cada interacción relevante debe quedar registrada en `prompts/`.
-
 ## Estructura del repositorio
 
 ```
@@ -48,7 +46,7 @@ Aplicación **RIA** de laboratorio para consultar y rastrear vuelos en tiempo re
 
 ### 1. API Key de AviationStack
 
-1. Regístrate en https://aviationstack.com/signup  
+1. Regístrarse en https://aviationstack.com/signup  
 2. Copia tu **Access Key** del dashboard  
 3. Crea `.env` desde la plantilla:
 
