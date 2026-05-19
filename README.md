@@ -1,4 +1,6 @@
-# RastreadorDeeVuelosLab2
+# Flight-tracker
+
+**Real-time Flight Status & Global Aviation**
 
 Aplicación **RIA** de laboratorio para consultar y rastrear vuelos en tiempo real usando la API pública [**AviationStack**](https://aviationstack.com/).
 
