@@ -4,7 +4,7 @@
 
 ```
 views/        → Orquestan búsqueda y estado de página
-components/   → UI pura + eventos (@search, favoritos)
+components/   → UI pura + eventos (@search, favoritos, mapa)
 services/     → fetch API, LocalStorage (sin dependencias Vue)
 router/       → Rutas y títulos de documento
 ```
@@ -38,7 +38,8 @@ flowchart LR
 | `FlightCard` | Tarjeta, favorito, link detalle + sessionStorage |
 | `HomeView` | Estado loading/error/resultados |
 | `FavoritesView` | Lista desde LocalStorage |
-| `FlightDetailView` | Detalle desde sessionStorage o favoritos |
+| `FlightDetailView` | Detalle desde sessionStorage o favoritos, carga coordenadas de aeropuertos |
+| `FlightMap` | Mapa Leaflet con ruta, marcadores de aeropuertos, popup salida, posición en vivo |
 
 ## Persistencia cliente
 

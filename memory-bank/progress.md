@@ -8,6 +8,11 @@
 - [x] Dropdown de números de vuelo (`listFlightOptions`)
 - [x] Favoritos en LocalStorage
 - [x] Detalle de vuelo (sessionStorage + favoritos)
+- [x] Mapa Leaflet con ruta orígen → destino
+- [x] Popup informativo en aeropuerto de salida
+- [x] Posición en vivo del avión (cuando API la provee)
+- [x] Actualización de posición desde API (botón refresco)
+- [x] Carga de coordenadas de aeropuertos (`fetchAirportCoords`)
 - [x] Tests Vitest (favoritos, helpers, validación dropdown)
 - [x] Docker + docker-compose
 - [x] `00-memory-bank.md`, `memory-bank/`, `.cursor/rules/`
@@ -22,7 +27,6 @@
 
 - [ ] Pruebas manuales documentadas con capturas (si el lab lo pide)
 - [ ] Nombres de integrantes en README
-- [ ] Más entradas en `prompts/` por cada sesión relevante con IA
 
 ## Problemas conocidos
 
@@ -30,5 +34,6 @@
 |----------|------------|
 | `npx` no en PATH (Windows) | Instalar Node LTS o usar Docker para build |
 | Plan free AviationStack solo HTTP | Proxy en Vite/nginx |
+| Plan free no incluye `live` data | Mapa muestra ruta entre aeropuertos como fallback |
 | Push Git 403 | Colaborador en repo o login como `diego22piriz` |
-| Pocas req/mes en plan free | Evitar recargar dropdown en cada click (caché implementada) |
+| Pocas req/mes en plan free | Caché de opciones y aeropuertos implementada |

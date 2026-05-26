@@ -17,7 +17,7 @@ Consultar el **estado en tiempo real** de vuelos comerciales sin instalar apps p
 | 2 | Indicar aeropuertos origen y/o destino (ej. MAD, BCN) |
 | 3 | Abrir desplegable y elegir un vuelo de la lista |
 | 4 | Buscar y revisar tarjetas de resultados |
-| 5 | Ver detalle o guardar en favoritos |
+| 5 | Ver detalle con mapa de ruta, popup de salida y (si disponible) posición en vivo |
 | 6 | Consultar favoritos en `/favoritos` |
 
 ## Mensajes y estados UI
@@ -28,5 +28,5 @@ Consultar el **estado en tiempo real** de vuelos comerciales sin instalar apps p
 
 ## Fuera de alcance (por diseño)
 
-- Mapa en vivo, notificaciones push, cuentas de usuario en servidor.
+- Notificaciones push, cuentas de usuario en servidor.
 - Historial de búsquedas en servidor (solo LocalStorage local).

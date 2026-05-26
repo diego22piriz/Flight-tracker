@@ -1,6 +1,6 @@
 # 00 — Memory Bank · Flight-tracker / RastreadorDeeVuelosLab2
 
-> Documento maestro de contexto (requisito del lab). Última actualización: 2026-05-19.
+> Documento maestro de contexto (requisito del lab). Última actualización: 2026-05-26.
 
 ## Resumen del proyecto
 
@@ -12,6 +12,7 @@
 | API | [AviationStack](https://aviationstack.com/) — vuelos en tiempo real |
 | Framework | **Vue 3** + Vite + Vue Router |
 | UI | **Bootstrap 5** |
+| Mapas | **Leaflet** + OpenStreetMap |
 | Persistencia | **LocalStorage** (favoritos), **sessionStorage** (detalle tras búsqueda) |
 | Backend | No permitido (solo proxy HTTP en Vite/nginx) |
 
@@ -29,9 +30,9 @@
 
 ```
 src/
-  components/   AppNavbar, FlightSearchForm, FlightCard, FlightList, AlertMessage
+  components/   AppNavbar, FlightSearchForm, FlightCard, FlightList, AlertMessage, FlightMap
   views/        HomeView, FavoritesView, FlightDetailView
-  services/     aviationstack.js, favorites.js
+  services/     aviationstack.js (searchFlights, listFlightOptions, fetchFlightByIata, fetchAirportCoords), favorites.js
   router/       index.js
 tests/          Vitest
 docker/         Dockerfile + nginx
@@ -46,6 +47,8 @@ memory-bank/    Contexto extendido por archivo
 |---------|------------------|
 | `searchFlights()` | `GET /flights` con filtros (vuelo, origen, destino, estado) |
 | `listFlightOptions()` | `GET /flights` por ruta → opciones para dropdown |
+| `fetchFlightByIata()` | `GET /flights` con `flight_iata` → datos frescos + live |
+| `fetchAirportCoords()` | `GET /airports` con `iata_code` → coordenadas (con caché) |
 
 - Base plan free: `http://api.aviationstack.com/v1`
 - Auth: `access_key` en query (variable `VITE_AVIATIONSTACK_API_KEY`)
@@ -77,6 +80,8 @@ Plantilla: `.env.example` (nunca commitear `.env`).
 | Dropdown vuelos desde API | ✅ |
 | Favoritos LocalStorage | ✅ |
 | Detalle vuelo | ✅ |
+| Mapa interactivo Leaflet (ruta + popup salida) | ✅ |
+| Posición en vivo (cuando API la provee) | ✅ |
 | Tests (favoritos, helpers, listFlightOptions) | ✅ |
 | Docker / compose | ✅ |
 | Git init + commit local | ✅ |
@@ -99,6 +104,8 @@ Error conocido: push denegado si la sesión Git es otra cuenta (p. ej. `antonygs
 2. **Dropdown** — Evita entrada manual errónea; datos reales de la ruta seleccionada.
 3. **Caché de opciones** — Clave `dep|arr|status`; no re-fetch si no cambian los filtros.
 4. **Composition API** — `<script setup>` en componentes.
+5. **Leaflet directo** — Sin wrapper Vue; control total del mapa, popups y eventos.
+6. **Caché de aeropuertos** — `airportCache` en memoria evita llamadas repetidas a `/airports`.
 
 ## Enlaces
 

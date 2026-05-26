@@ -65,22 +65,8 @@ VITE_AVIATIONSTACK_API_KEY=tu_clave_real
 
 > El plan gratuito usa **HTTP** (no HTTPS). El proxy de Vite/Docker evita problemas de CORS y de redirección HTTPS del navegador.
 
-### 2. Desarrollo local (requiere Node.js LTS)
 
-```bash
-npm install
-npm run dev
-```
-
-Abre http://localhost:5173
-
-### 3. Tests
-
-```bash
-npm test
-```
-
-### 4. Despliegue con Docker
+### 2. Despliegue con Docker
 
 ```bash
 # PowerShell
@@ -117,4 +103,4 @@ App en http://localhost:8080
 
 ## Autores
 
-Grupo Lab 2 — *(añadir nombres del equipo)*
+Grupo Lab 2 — Diego Piriz y Antony Sarazola
