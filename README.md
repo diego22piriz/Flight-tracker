@@ -30,14 +30,17 @@ Aplicación **RIA** de laboratorio para consultar y rastrear vuelos en tiempo re
 ```
 ├── src/
 │   ├── components/
+│   │   ├── FlightMap.vue        # Mapa Leaflet con ruta y posición en vivo
+│   │   ├── FlightCard.vue
+│   │   └── ...
 │   ├── views/
 │   ├── services/
 │   └── router/
 ├── tests/
 ├── docker/
 ├── prompts/
-├── memory-bank/          # contexto extendido (cursor-bank)
-├── 00-memory-bank.md       # contexto maestro (requisito lab)
+├── memory-bank/
+├── 00-memory-bank.md
 ├── docker-compose.yml
 └── README.md
 ```
@@ -91,6 +94,9 @@ App en http://localhost:8080
 
 - **Buscar vuelos** por número IATA, origen/destino (códigos IATA) o estado.
 - **Ver detalle** de salida, llegada, retrasos y posición en vivo (si la API la devuelve).
+- **Mapa interactivo** con ruta del vuelo (origen → destino) usando Leaflet y OpenStreetMap.
+- **Posición en vivo** del avión sobre el mapa cuando la API proporciona datos de seguimiento.
+- **Pop-up informativo** en el aeropuerto de salida con terminal, puerta y hora programada.
 - **Favoritos** guardados en `localStorage` del navegador.
 - **Navegación** entre páginas con Vue Router y barra Bootstrap.
 

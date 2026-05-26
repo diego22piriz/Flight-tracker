@@ -24,8 +24,18 @@ let routeLine = null
 let depMarker = null
 let arrMarker = null
 let liveMarker = null
-let depPopup = null
-let arrPopup = null
+
+function makePopupContent(airport, label) {
+  const d = airport.details || {}
+  let html = `<b>${airport.name || airport.iata}</b><br><span class="text-muted">${label}</span>`
+  if (d.terminal) html += `<br>Terminal: ${d.terminal}`
+  if (d.gate) html += `<br>Puerta: ${d.gate}`
+  if (d.scheduled) {
+    const t = new Date(d.scheduled).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })
+    html += `<br>Programada: ${t}`
+  }
+  return html
+}
 
 function initMap() {
   if (map) return
@@ -40,6 +50,7 @@ function initMap() {
   const hasDep = props.departure?.lat != null
   const hasArr = props.arrival?.lat != null
   const hasLive = props.live?.lat != null
+  const popupOpts = { autoClose: false, closeButton: true }
 
   const points = []
   if (hasDep) points.push([props.departure.lat, props.departure.lon])
@@ -75,23 +86,15 @@ function initMap() {
 
   if (hasDep) {
     const d = props.departure
-    depMarker = L.marker([d.lat, d.lon], { icon: blueIcon }).addTo(map)
-    const dd = d.details || {}
-    depPopup = L.popup({ autoClose: false, closeButton: true })
-      .setLatLng([d.lat, d.lon])
-      .setContent(`<b>${d.name || d.iata}</b><br>
-        <span class="text-muted">Salida</span><br>
-        ${dd.terminal ? `Terminal: ${dd.terminal}<br>` : ''}
-        ${dd.gate ? `Puerta: ${dd.gate}<br>` : ''}
-        ${dd.scheduled ? `Programada: ${new Date(dd.scheduled).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`)
+    depMarker = L.marker([d.lat, d.lon], { icon: blueIcon })
+      .addTo(map)
+      .bindPopup(makePopupContent(d, 'Salida'), popupOpts)
     routeCoords.push([d.lat, d.lon])
   }
 
   if (hasLive) {
     const lines = [props.flightLabel || 'Vuelo']
-    if (props.live.altitude != null) {
-      lines.push(`Altitud: ${props.live.altitude} m`)
-    }
+    if (props.live.altitude != null) lines.push(`Altitud: ${props.live.altitude} m`)
     liveMarker = L.marker([props.live.lat, props.live.lon])
       .addTo(map)
       .bindPopup(lines.join('<br>'))
@@ -100,15 +103,9 @@ function initMap() {
 
   if (hasArr) {
     const a = props.arrival
-    arrMarker = L.marker([a.lat, a.lon], { icon: blueIcon }).addTo(map)
-    const aa = a.details || {}
-    arrPopup = L.popup({ autoClose: false, closeButton: true })
-      .setLatLng([a.lat, a.lon])
-      .setContent(`<b>${a.name || a.iata}</b><br>
-        <span class="text-muted">Llegada</span><br>
-        ${aa.terminal ? `Terminal: ${aa.terminal}<br>` : ''}
-        ${aa.gate ? `Puerta: ${aa.gate}<br>` : ''}
-        ${aa.scheduled ? `Programada: ${new Date(aa.scheduled).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' })}` : ''}`)
+    arrMarker = L.marker([a.lat, a.lon], { icon: blueIcon })
+      .addTo(map)
+      .bindPopup(makePopupContent(a, 'Llegada'), popupOpts)
     routeCoords.push([a.lat, a.lon])
   }
 
@@ -121,34 +118,21 @@ function initMap() {
 
     if (routeCoords.length > 1) {
       map.fitBounds(routeLine.getBounds().pad(0.3))
+      map.once('moveend', () => {
+        if (depMarker) depMarker.openPopup()
+      })
     }
-  }
-
-  setTimeout(() => {
-    if (depPopup) map.addLayer(depPopup)
-    if (arrPopup) map.addLayer(arrPopup)
-  }, 300)
-}
-
-function openPopup(type) {
-  if (!map) return
-  if (type === 'departure' && depPopup) {
-    map.addLayer(depPopup)
-  } else if (type === 'arrival' && arrPopup) {
-    map.addLayer(arrPopup)
+  } else if (depMarker) {
+    depMarker.openPopup()
   }
 }
-
-defineExpose({ openPopup })
 
 function updatePosition() {
   if (!map) return
   if (liveMarker && props.live?.lat != null) {
     liveMarker.setLatLng([props.live.lat, props.live.lon])
     const lines = [props.flightLabel || 'Vuelo']
-    if (props.live.altitude != null) {
-      lines.push(`Altitud: ${props.live.altitude} m`)
-    }
+    if (props.live.altitude != null) lines.push(`Altitud: ${props.live.altitude} m`)
     liveMarker.setPopupContent(lines.join('<br>'))
   }
 }

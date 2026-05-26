@@ -17,7 +17,7 @@
 
         <div class="row g-4">
           <div class="col-md-6">
-            <div class="border rounded p-3 h-100 bg-light airport-box" @click="showAirportPopup('departure')">
+            <div class="border rounded p-3 h-100 bg-light">
               <h2 class="h6 text-uppercase text-muted">Salida</h2>
               <p class="mb-1"><strong>{{ flight.departure?.airport }}</strong></p>
               <p class="mb-1">Terminal: {{ flight.departure?.terminal || '—' }}</p>
@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="border rounded p-3 h-100 bg-light airport-box" @click="showAirportPopup('arrival')">
+            <div class="border rounded p-3 h-100 bg-light">
               <h2 class="h6 text-uppercase text-muted">Llegada</h2>
               <p class="mb-1"><strong>{{ flight.arrival?.airport }}</strong></p>
               <p class="mb-1">Terminal: {{ flight.arrival?.terminal || '—' }}</p>
@@ -51,7 +51,6 @@
           </p>
           <FlightMap
             v-if="departureAirport || arrivalAirport"
-            ref="mapRef"
             :departure="departureAirport"
             :arrival="arrivalAirport"
             :live="livePosition"
@@ -110,7 +109,6 @@ const error = ref('')
 const refreshing = ref(false)
 const departureAirport = ref(null)
 const arrivalAirport = ref(null)
-const mapRef = ref(null)
 const isFav = computed(() => (flight.value ? isFavorite(flight.value) : false))
 
 const livePosition = computed(() => {
@@ -164,10 +162,6 @@ async function refreshLivePosition() {
   }
 }
 
-function showAirportPopup(type) {
-  mapRef.value?.openPopup(type)
-}
-
 function toggle() {
   if (!flight.value) return
   toggleFavorite(flight.value)
@@ -193,13 +187,3 @@ onMounted(() => {
   loadAirports()
 })
 </script>
-
-<style scoped>
-.airport-box {
-  cursor: pointer;
-  transition: box-shadow 0.15s ease;
-}
-.airport-box:hover {
-  box-shadow: 0 0 0 2px #0d6efd40;
-}
-</style>
