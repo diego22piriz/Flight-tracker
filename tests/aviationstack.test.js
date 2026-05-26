@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   flightKey,
   formatDateTime,
+  listFlightOptions,
   statusBadgeClass,
 } from '../src/services/aviationstack.js'
 
@@ -21,5 +22,9 @@ describe('aviationstack helpers', () => {
   it('asigna clase bootstrap por estado', () => {
     expect(statusBadgeClass('landed')).toBe('bg-success')
     expect(statusBadgeClass('unknown')).toBe('bg-secondary')
+  })
+
+  it('exige origen o destino para listar vuelos del dropdown', async () => {
+    await expect(listFlightOptions({})).rejects.toThrow(/origen o destino/i)
   })
 })

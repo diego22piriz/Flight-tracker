@@ -24,3 +24,9 @@ Objetivo: página de tracking de vuelos con AviationStack
 - Rutas: `/`, `/favoritos`, `/vuelo/:flightKey`
 - Persistencia: `localStorage` (favoritos) + `sessionStorage` (detalle tras búsqueda)
 - Sin servidor de aplicación con lógica de negocio
+- Repo GitHub objetivo: **diego22piriz/Flight-tracker**
+
+## Evolución posterior (ver prompts 003–005)
+
+- Formulario con dropdown de vuelos (`listFlightOptions`)
+- Documentación en `00-memory-bank.md` y carpeta `memory-bank/`

@@ -67,6 +67,49 @@ export async function searchFlights(filters = {}) {
   return result.data ?? []
 }
 
+/**
+ * Lista números de vuelo disponibles según origen/destino (para dropdown).
+ * @returns {Promise<Array<{ value: string, label: string }>>}
+ */
+export async function listFlightOptions(filters = {}) {
+  const params = { limit: filters.limit ?? 50 }
+
+  if (filters.depIata) params.dep_iata = filters.depIata.toUpperCase()
+  if (filters.arrIata) params.arr_iata = filters.arrIata.toUpperCase()
+  if (filters.flightStatus) params.flight_status = filters.flightStatus
+
+  if (!params.dep_iata && !params.arr_iata) {
+    throw new Error('Indica al menos origen o destino para cargar vuelos.')
+  }
+
+  const result = await request('/flights', params)
+  const flights = result.data ?? []
+  const seen = new Set()
+  const options = []
+
+  for (const flight of flights) {
+    const code =
+      flight?.flight?.iata ||
+      (flight?.airline?.iata && flight?.flight?.number
+        ? `${flight.airline.iata}${flight.flight.number}`
+        : null)
+
+    if (!code || seen.has(code)) continue
+    seen.add(code)
+
+    const dep = flight.departure?.iata || '—'
+    const arr = flight.arrival?.iata || '—'
+    const airline = flight.airline?.name ? ` · ${flight.airline.name}` : ''
+
+    options.push({
+      value: code,
+      label: `${code} — ${dep} → ${arr}${airline}`,
+    })
+  }
+
+  return options.sort((a, b) => a.value.localeCompare(b.value))
+}
+
 export function flightKey(flight) {
   const iata = flight?.flight?.iata || flight?.flight?.number || 'unknown'
   const date = flight?.flight_date || ''

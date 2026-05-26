@@ -1,21 +1,52 @@
 # System Patterns
 
-## Arquitectura
+## Capas
 
 ```
-views/       → pantallas y rutas de página
-components/  → UI reutilizable
-services/    → llamadas API y lógica de datos
-router/      → definición de rutas
+views/        → Orquestan búsqueda y estado de página
+components/   → UI pura + eventos (@search, favoritos)
+services/     → fetch API, LocalStorage (sin dependencias Vue)
+router/       → Rutas y títulos de documento
 ```
 
-## Convenciones
+## Flujo del formulario de búsqueda
 
-- Los servicios no importan componentes Vue/React.
-- Las vistas componen componentes y llaman a servicios.
-- Estado global (si hace falta): documentar aquí la decisión (Pinia, Context, etc.).
+```mermaid
+flowchart LR
+  A[Origen/Destino] --> B{canLoadFlights?}
+  B -->|sí| C[click/focus select]
+  C --> D[listFlightOptions API]
+  D --> E[flightOptions en select]
+  E --> F[onSubmit → searchFlights]
+```
 
-## Patrones a seguir
+- `onRouteChange`: limpia vuelo seleccionado y caché de opciones.
+- `lastOptionsKey`: evita peticiones duplicadas si los filtros no cambian.
 
-- Un servicio por dominio (p. ej. `flightService`).
-- Manejo de errores de API centralizado en servicios.
+## Convenciones de código
+
+- Servicios **no** importan `.vue`.
+- Errores de API se propagan como `Error` con mensaje legible.
+- Códigos IATA en mayúsculas al enviar a la API.
+- Evento global `favorites-updated` para refrescar contador en navbar.
+
+## Componentes clave
+
+| Componente | Responsabilidad |
+|------------|-----------------|
+| `FlightSearchForm` | Filtros + dropdown + emit `search` |
+| `FlightCard` | Tarjeta, favorito, link detalle + sessionStorage |
+| `HomeView` | Estado loading/error/resultados |
+| `FavoritesView` | Lista desde LocalStorage |
+| `FlightDetailView` | Detalle desde sessionStorage o favoritos |
+
+## Persistencia cliente
+
+| Clave | Uso |
+|-------|-----|
+| `rastreador_vuelos_favoritos` | Array JSON en LocalStorage |
+| `flight:{flightKey}` | Objeto vuelo en sessionStorage para detalle |
+
+## Sin estado global
+
+No se usa Pinia/Vuex; estado local en vistas y `reactive`/`ref` en formulario.
