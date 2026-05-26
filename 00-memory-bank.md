@@ -1,0 +1,107 @@
+# 00 — Memory Bank · Flight-tracker / RastreadorDeeVuelosLab2
+
+> Documento maestro de contexto (requisito del lab). Última actualización: 2026-05-19.
+
+## Resumen del proyecto
+
+| Campo | Valor |
+|-------|--------|
+| Nombre local | RastreadorDeeVuelosLab2 |
+| Repositorio GitHub | [diego22piriz/Flight-tracker](https://github.com/diego22piriz/Flight-tracker) |
+| Tipo | RIA (Rich Internet Application) |
+| API | [AviationStack](https://aviationstack.com/) — vuelos en tiempo real |
+| Framework | **Vue 3** + Vite + Vue Router |
+| UI | **Bootstrap 5** |
+| Persistencia | **LocalStorage** (favoritos), **sessionStorage** (detalle tras búsqueda) |
+| Backend | No permitido (solo proxy HTTP en Vite/nginx) |
+
+## Requisitos del laboratorio
+
+- [x] Vue 3 + Bootstrap 5
+- [x] ≥ 2 rutas: `/`, `/favoritos`, `/vuelo/:flightKey`
+- [x] Sin backend de negocio ni BD persistentes
+- [x] `prompts/` con interacciones relevantes
+- [x] `00-memory-bank.md`
+- [x] Declaración IA en `README.md`
+- [ ] Push a GitHub completado (pendiente permisos cuenta `diego22piriz`)
+
+## Arquitectura
+
+```
+src/
+  components/   AppNavbar, FlightSearchForm, FlightCard, FlightList, AlertMessage
+  views/        HomeView, FavoritesView, FlightDetailView
+  services/     aviationstack.js, favorites.js
+  router/       index.js
+tests/          Vitest
+docker/         Dockerfile + nginx
+prompts/        Registro de prompts IA
+memory-bank/    Contexto extendido por archivo
+.cursor/rules/  PLAN/ACT + guía memory bank
+```
+
+## API AviationStack
+
+| Función | Endpoint / uso |
+|---------|------------------|
+| `searchFlights()` | `GET /flights` con filtros (vuelo, origen, destino, estado) |
+| `listFlightOptions()` | `GET /flights` por ruta → opciones para dropdown |
+
+- Base plan free: `http://api.aviationstack.com/v1`
+- Auth: `access_key` en query (variable `VITE_AVIATIONSTACK_API_KEY`)
+- Proxy dev: Vite `/api/aviation`
+- Proxy prod: nginx en Docker
+
+**Límites plan free:** ~100 req/mes, solo HTTP, algunos parámetros restringidos.
+
+## UX del formulario de búsqueda
+
+1. Usuario ingresa **origen** y/o **destino** (IATA, 3 letras).
+2. Al abrir el **dropdown de nº vuelo**, se llama `listFlightOptions()` y se muestran códigos tipo `IB3251 — MAD → BCN · Iberia`.
+3. Cambiar ruta o estado **resetea** el dropdown y la caché de opciones.
+4. **Buscar** envía filtros a `searchFlights()` (vuelo opcional + ruta/estado).
+
+## Variables de entorno
+
+```env
+VITE_AVIATIONSTACK_API_KEY=<clave_aviationstack>
+```
+
+Plantilla: `.env.example` (nunca commitear `.env`).
+
+## Estado actual
+
+| Área | Estado |
+|------|--------|
+| App Vue 3 + Bootstrap | ✅ |
+| Dropdown vuelos desde API | ✅ |
+| Favoritos LocalStorage | ✅ |
+| Detalle vuelo | ✅ |
+| Tests (favoritos, helpers, listFlightOptions) | ✅ |
+| Docker / compose | ✅ |
+| Git init + commit local | ✅ |
+| Git push remoto | ⏳ Requiere acceso a `diego22piriz` |
+
+## Git / despliegue
+
+```powershell
+cd RastreadorDeeVuelosLab2
+git remote -v   # origin → diego22piriz/Flight-tracker
+git push -u origin main   # cuando tengas permisos
+npm install && npm run dev
+```
+
+Error conocido: push denegado si la sesión Git es otra cuenta (p. ej. `antonygs`).
+
+## Decisiones técnicas
+
+1. **Proxy** — Infraestructura, no lógica de negocio; necesario por HTTP/CORS del plan free.
+2. **Dropdown** — Evita entrada manual errónea; datos reales de la ruta seleccionada.
+3. **Caché de opciones** — Clave `dep|arr|status`; no re-fetch si no cambian los filtros.
+4. **Composition API** — `<script setup>` en componentes.
+
+## Enlaces
+
+- API: https://docs.apilayer.com/aviationstack/docs/api-documentation/
+- Repo: https://github.com/diego22piriz/Flight-tracker
+- Contexto detallado: `memory-bank/`
