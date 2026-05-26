@@ -17,7 +17,7 @@
 
         <div class="row g-4">
           <div class="col-md-6">
-            <div class="border rounded p-3 h-100 bg-light">
+            <div class="border rounded p-3 h-100 bg-light airport-box" @click="showAirportPopup('departure')">
               <h2 class="h6 text-uppercase text-muted">Salida</h2>
               <p class="mb-1"><strong>{{ flight.departure?.airport }}</strong></p>
               <p class="mb-1">Terminal: {{ flight.departure?.terminal || '—' }}</p>
@@ -30,7 +30,7 @@
             </div>
           </div>
           <div class="col-md-6">
-            <div class="border rounded p-3 h-100 bg-light">
+            <div class="border rounded p-3 h-100 bg-light airport-box" @click="showAirportPopup('arrival')">
               <h2 class="h6 text-uppercase text-muted">Llegada</h2>
               <p class="mb-1"><strong>{{ flight.arrival?.airport }}</strong></p>
               <p class="mb-1">Terminal: {{ flight.arrival?.terminal || '—' }}</p>
@@ -49,19 +49,38 @@
             Aeronave: {{ flight.aircraft?.registration || '—' }}
             <span v-if="flight.aircraft?.iata">({{ flight.aircraft.iata }})</span>
           </p>
-          <p v-if="flight.live" class="mb-0 small text-muted">
-            Última posición: lat {{ flight.live.latitude }}, lon {{ flight.live.longitude }},
-            altitud {{ flight.live.altitude }} m
+          <FlightMap
+            v-if="departureAirport || arrivalAirport"
+            ref="mapRef"
+            :departure="departureAirport"
+            :arrival="arrivalAirport"
+            :live="livePosition"
+            :flight-label="flight.flight?.iata || flight.flight?.number"
+            class="mt-2"
+          />
+          <p v-if="livePosition" class="small text-muted mt-1 mb-0">
+            lat {{ livePosition.lat }}, lon {{ livePosition.lon }},
+            alt {{ livePosition.altitude }} m
           </p>
         </div>
 
-        <button
-          type="button"
-          class="btn btn-warning mt-3"
-          @click="toggle"
-        >
-          {{ isFav ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
-        </button>
+        <div class="d-flex gap-2 mt-3">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            :disabled="refreshing"
+            @click="refreshLivePosition"
+          >
+            {{ refreshing ? 'Actualizando...' : '🔄 Actualizar posición' }}
+          </button>
+          <button
+            type="button"
+            class="btn btn-warning"
+            @click="toggle"
+          >
+            {{ isFav ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
+          </button>
+        </div>
       </div>
     </div>
 
@@ -72,8 +91,11 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import AlertMessage from '../components/AlertMessage.vue'
+import FlightMap from '../components/FlightMap.vue'
 import {
   flightKey,
+  fetchFlightByIata,
+  fetchAirportCoords,
   formatDateTime,
   statusBadgeClass,
 } from '../services/aviationstack.js'
@@ -85,7 +107,20 @@ const props = defineProps({
 
 const flight = ref(null)
 const error = ref('')
+const refreshing = ref(false)
+const departureAirport = ref(null)
+const arrivalAirport = ref(null)
+const mapRef = ref(null)
 const isFav = computed(() => (flight.value ? isFavorite(flight.value) : false))
+
+const livePosition = computed(() => {
+  if (!flight.value?.live) return null
+  return {
+    lat: flight.value.live.latitude,
+    lon: flight.value.live.longitude,
+    altitude: flight.value.live.altitude,
+  }
+})
 
 function loadFromStorage() {
   const item = getFavorites().find((f) => f.key === props.flightKey)
@@ -95,6 +130,42 @@ function loadFromStorage() {
   }
   error.value =
     'Abre el detalle desde los resultados de búsqueda o guarda el vuelo en favoritos.'
+}
+
+async function loadAirports() {
+  if (!flight.value) return
+  const dep = flight.value.departure
+  const arr = flight.value.arrival
+  if (dep?.iata) {
+    fetchAirportCoords(dep.iata).then((c) => {
+      if (c) departureAirport.value = { ...c, iata: dep.iata, details: dep }
+    })
+  }
+  if (arr?.iata) {
+    fetchAirportCoords(arr.iata).then((c) => {
+      if (c) arrivalAirport.value = { ...c, iata: arr.iata, details: arr }
+    })
+  }
+}
+
+async function refreshLivePosition() {
+  const iata = flight.value?.flight?.iata
+  if (!iata) return
+  refreshing.value = true
+  try {
+    const fresh = await fetchFlightByIata(iata)
+    if (fresh?.live) {
+      flight.value = { ...flight.value, live: fresh.live }
+    }
+  } catch {
+    /* ignore, keep existing data */
+  } finally {
+    refreshing.value = false
+  }
+}
+
+function showAirportPopup(type) {
+  mapRef.value?.openPopup(type)
 }
 
 function toggle() {
@@ -107,12 +178,28 @@ onMounted(() => {
   const cached = sessionStorage.getItem(`flight:${props.flightKey}`)
   if (cached) {
     try {
-      flight.value = JSON.parse(cached)
+      const parsed = JSON.parse(cached)
+      flight.value = parsed
+      loadAirports()
+      if (parsed.flight?.iata) {
+        refreshLivePosition()
+      }
       return
     } catch {
       /* ignore */
     }
   }
   loadFromStorage()
+  loadAirports()
 })
 </script>
+
+<style scoped>
+.airport-box {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+.airport-box:hover {
+  box-shadow: 0 0 0 2px #0d6efd40;
+}
+</style>

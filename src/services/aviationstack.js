@@ -110,6 +110,48 @@ export async function listFlightOptions(filters = {}) {
   return options.sort((a, b) => a.value.localeCompare(b.value))
 }
 
+/**
+ * Obtiene datos actualizados de un vuelo por su código IATA.
+ * @param {string} flightIata - código IATA del vuelo (ej. "AV2568")
+ * @returns {Promise<object|null>} datos del vuelo con live position o null
+ */
+export async function fetchFlightByIata(flightIata) {
+  if (!flightIata) return null
+  const result = await request('/flights', {
+    flight_iata: flightIata.toUpperCase(),
+    limit: 1,
+  })
+  return result.data?.[0] ?? null
+}
+
+/**
+ * Obtiene coordenadas de un aeropuerto por su código IATA.
+ * @param {string} iata - código IATA del aeropuerto (ej. "MAD")
+ * @returns {Promise<{ lat: number, lon: number, name: string } | null>}
+ */
+const airportCache = {}
+export async function fetchAirportCoords(iata) {
+  if (!iata) return null
+  const key = iata.toUpperCase()
+  if (airportCache[key]) return airportCache[key]
+  try {
+    const result = await request('/airports', { iata_code: key, limit: 1 })
+    const ap = result.data?.[0]
+    if (ap?.latitude && ap?.longitude) {
+      const coords = {
+        lat: parseFloat(ap.latitude),
+        lon: parseFloat(ap.longitude),
+        name: ap.airport_name || key,
+      }
+      airportCache[key] = coords
+      return coords
+    }
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+
 export function flightKey(flight) {
   const iata = flight?.flight?.iata || flight?.flight?.number || 'unknown'
   const date = flight?.flight_date || ''
