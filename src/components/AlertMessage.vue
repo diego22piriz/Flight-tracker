@@ -1,5 +1,5 @@
 <template>
-  <div v-if="message" class="alert" :class="alertClass" role="alert">
+  <div v-if="message" class="sketch-alert" :class="alertClass" role="alert">
     {{ message }}
   </div>
 </template>
@@ -12,5 +12,5 @@ const props = defineProps({
   variant: { type: String, default: 'danger' },
 })
 
-const alertClass = computed(() => `alert-${props.variant}`)
+const alertClass = computed(() => `sketch-alert--${props.variant}`)
 </script>

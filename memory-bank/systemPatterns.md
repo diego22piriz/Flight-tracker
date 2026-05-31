@@ -9,18 +9,49 @@ services/     → fetch API, LocalStorage (sin dependencias Vue)
 router/       → Rutas y títulos de documento
 ```
 
+## Layout principal (Home)
+
+```
+┌─────────────────────────────────────────────┐
+│ Header: Rastreador de vuelos | Buscar Guardados │
+├──────────────┬──────────────────────────────┤
+│ Sidebar      │ Panel resultados (gris)      │
+│ sketch-panel │  ┌─ flight-card (navy) ─┐   │
+│  Origen|Dest │  │ Detalles    Guardar  │   │
+│  N° vuelo    │  └──────────────────────┘   │
+│  Estado      │  (tarjetas apiladas)         │
+└──────────────┴──────────────────────────────┘
+```
+
+## Estilos (sketch theme)
+
+| Token CSS | Uso |
+|-----------|-----|
+| `--sketch-bg` | Fondo general (#1c2236) |
+| `--sketch-header` | Barra superior |
+| `--sketch-panel` | Contenedores sidebar/resultados |
+| `--sketch-card` | Tarjetas de vuelo |
+| `--sketch-link` | Acción «Detalles» |
+| `--sketch-accent` | Acción «Guardar» |
+
+Clases reutilizables: `sketch-panel`, `sketch-form`, `flight-card`, `search-layout`.
+
 ## Flujo del formulario de búsqueda
 
 ```mermaid
 flowchart LR
-  A[Origen/Destino] --> B{canLoadFlights?}
-  B -->|sí| C[click/focus select]
+  M[onMounted] --> N[listAirportOptions]
+  N --> O[airportOptions en selects origen/destino]
+  O --> A[Usuario elige ruta]
+  A --> B{canLoadFlights?}
+  B -->|sí| C[click/focus select vuelo]
   C --> D[listFlightOptions API]
   D --> E[flightOptions en select]
   E --> F[onSubmit → searchFlights]
 ```
 
-- `onRouteChange`: limpia vuelo seleccionado y caché de opciones.
+- `listAirportOptions`: una petición a `/airports` por sesión (`airportOptionsCache`).
+- `onRouteChange`: limpia vuelo seleccionado y caché de opciones de vuelos.
 - `lastOptionsKey`: evita peticiones duplicadas si los filtros no cambian.
 
 ## Convenciones de código
@@ -34,9 +65,9 @@ flowchart LR
 
 | Componente | Responsabilidad |
 |------------|-----------------|
-| `FlightSearchForm` | Filtros + dropdown + emit `search` |
-| `FlightCard` | Tarjeta, favorito, link detalle + sessionStorage |
-| `HomeView` | Estado loading/error/resultados |
+| `FlightSearchForm` | Filtros verticales en sidebar + emit `search` |
+| `FlightCard` | Tarjeta oscura; Detalles / Guardar |
+| `HomeView` | Layout sidebar (form) + panel resultados |
 | `FavoritesView` | Lista desde LocalStorage |
 | `FlightDetailView` | Detalle desde sessionStorage o favoritos, carga coordenadas de aeropuertos |
 | `FlightMap` | Mapa Leaflet con ruta, marcadores de aeropuertos, popup salida, posición en vivo |

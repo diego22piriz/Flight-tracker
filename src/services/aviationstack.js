@@ -67,6 +67,44 @@ export async function searchFlights(filters = {}) {
   return result.data ?? []
 }
 
+let airportOptionsCache = null
+
+/**
+ * Lista aeropuertos disponibles (para dropdowns de origen/destino).
+ * @returns {Promise<Array<{ value: string, label: string }>>}
+ */
+export async function listAirportOptions({ limit = 100 } = {}) {
+  if (airportOptionsCache) return airportOptionsCache
+
+  const result = await request('/airports', { limit })
+  const airports = result.data ?? []
+  const seen = new Set()
+  const options = []
+
+  for (const ap of airports) {
+    const iata = ap?.iata_code?.trim()?.toUpperCase()
+    if (!iata || iata.length !== 3 || seen.has(iata)) continue
+    seen.add(iata)
+
+    const name = ap.airport_name || iata
+    const city = ap.city ? ` · ${ap.city}` : ''
+    const country = ap.country_iso2 ? ` (${ap.country_iso2})` : ''
+
+    options.push({
+      value: iata,
+      label: `${iata} — ${name}${city}${country}`,
+    })
+  }
+
+  airportOptionsCache = options.sort((a, b) => a.value.localeCompare(b.value))
+  return airportOptionsCache
+}
+
+/** Limpia la caché de aeropuertos (útil en tests). */
+export function resetAirportOptionsCache() {
+  airportOptionsCache = null
+}
+
 /**
  * Lista números de vuelo disponibles según origen/destino (para dropdown).
  * @returns {Promise<Array<{ value: string, label: string }>>}

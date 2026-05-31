@@ -1,30 +1,463 @@
 :root {
-  --app-primary: #0d6efd;
-  --app-bg: #f4f7fb;
+  --sketch-bg: #1c2236;
+  --sketch-header: #252b3f;
+  --sketch-panel: #5c6378;
+  --sketch-input: #2a3149;
+  --sketch-card: #252b42;
+  --sketch-text: #ffffff;
+  --sketch-text-muted: #c5c9d4;
+  --sketch-link: #6ec4ff;
+  --sketch-accent: #f0a055;
+  --sketch-border: #454b5e;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--app-bg);
+  background: var(--sketch-bg);
+  color: var(--sketch-text);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
 }
 
 .app-shell {
-  background: linear-gradient(180deg, #e8f0fe 0%, var(--app-bg) 120px);
+  background: var(--sketch-bg);
+  min-height: 100vh;
+}
+
+.app-main {
+  flex: 1;
+  padding: 1.25rem 1.5rem 2rem;
 }
 
 .app-footer {
-  border-top: 1px solid #dee2e6;
-  background: #fff;
+  border-top: 1px solid var(--sketch-border);
+  background: var(--sketch-header);
+  color: var(--sketch-text-muted);
 }
 
-.status-badge {
-  text-transform: capitalize;
+.app-footer a {
+  color: var(--sketch-link);
 }
 
+/* Header */
+.sketch-header {
+  background: var(--sketch-header);
+  border-bottom: 1px solid var(--sketch-border);
+  padding: 0.85rem 1.5rem;
+}
+
+.sketch-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sketch-header__title {
+  color: var(--sketch-text);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 0;
+  text-decoration: none;
+}
+
+.sketch-header__nav {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sketch-header__link {
+  color: var(--sketch-text);
+  font-size: 0.95rem;
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.15s ease;
+}
+
+.sketch-header__link:hover,
+.sketch-header__link.router-link-active {
+  color: var(--sketch-text);
+  opacity: 1;
+}
+
+.sketch-header__badge {
+  background: var(--sketch-accent);
+  border-radius: 999px;
+  color: #1c2236;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.45rem;
+}
+
+/* Home layout */
+.search-layout {
+  display: flex;
+  gap: 1.25rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 8rem);
+}
+
+.search-layout__sidebar {
+  flex: 0 0 280px;
+  max-width: 320px;
+}
+
+.search-layout__main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Panels */
+.sketch-panel {
+  background: var(--sketch-panel);
+  border-radius: 4px;
+  padding: 1.25rem;
+}
+
+.sketch-panel--results {
+  min-height: 420px;
+}
+
+.sketch-panel__title {
+  color: var(--sketch-text);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+}
+
+/* Form */
+.sketch-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.sketch-form__row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.sketch-form__field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.sketch-form__label {
+  color: var(--sketch-text);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.sketch-form__control,
+.sketch-form select {
+  appearance: none;
+  background: var(--sketch-input);
+  border: 1px solid var(--sketch-border);
+  border-radius: 3px;
+  color: var(--sketch-text);
+  font-size: 0.85rem;
+  padding: 0.55rem 0.65rem;
+  width: 100%;
+}
+
+.sketch-form__control:focus,
+.sketch-form select:focus {
+  border-color: var(--sketch-link);
+  box-shadow: 0 0 0 2px rgba(110, 196, 255, 0.2);
+  outline: none;
+}
+
+.sketch-form__control:disabled,
+.sketch-form select:disabled {
+  opacity: 0.6;
+}
+
+.sketch-form__hint {
+  color: var(--sketch-text-muted);
+  font-size: 0.72rem;
+  margin: 0;
+}
+
+.sketch-form__hint--error {
+  color: #ff8a8a;
+}
+
+.sketch-form__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+
+.sketch-btn {
+  background: var(--sketch-input);
+  border: 1px solid var(--sketch-border);
+  border-radius: 3px;
+  color: var(--sketch-text);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.85rem;
+  transition: background 0.15s ease;
+}
+
+.sketch-btn:hover:not(:disabled) {
+  background: #343b56;
+}
+
+.sketch-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.sketch-btn--primary {
+  background: var(--sketch-link);
+  border-color: var(--sketch-link);
+  color: #1c2236;
+  font-weight: 600;
+}
+
+.sketch-btn--primary:hover:not(:disabled) {
+  background: #8fd4ff;
+}
+
+.sketch-btn--ghost {
+  background: transparent;
+}
+
+/* Results */
+.results-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.results-empty {
+  align-items: center;
+  color: var(--sketch-text-muted);
+  display: flex;
+  font-size: 0.9rem;
+  justify-content: center;
+  min-height: 280px;
+  text-align: center;
+}
+
+/* Flight cards */
 .flight-card {
-  transition: box-shadow 0.2s ease;
+  background: var(--sketch-card);
+  border: 1px solid var(--sketch-border);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  min-height: 140px;
+  transition: border-color 0.15s ease;
 }
 
 .flight-card:hover {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  border-color: #5a6278;
+}
+
+.flight-card__body {
+  flex: 1;
+  padding: 1.1rem 1rem 0.75rem;
+  text-align: center;
+}
+
+.flight-card__title {
+  color: var(--sketch-text);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.flight-card__subtitle {
+  color: var(--sketch-text-muted);
+  font-size: 0.82rem;
+  margin: 0 0 0.65rem;
+}
+
+.flight-card__route {
+  color: var(--sketch-text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.flight-card__meta {
+  color: var(--sketch-text-muted);
+  font-size: 0.75rem;
+  margin: 0.35rem 0 0;
+}
+
+.flight-card__footer {
+  align-items: center;
+  border-top: 1px solid var(--sketch-border);
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+}
+
+.flight-card__action {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0;
+  text-decoration: none;
+}
+
+.flight-card__action--details {
+  color: var(--sketch-link);
+}
+
+.flight-card__action--details:hover {
+  color: #8fd4ff;
+}
+
+.flight-card__action--save {
+  color: var(--sketch-accent);
+}
+
+.flight-card__action--save:hover {
+  color: #ffc088;
+}
+
+.flight-card__action--saved {
+  color: #ffc088;
+}
+
+.status-badge {
+  border-radius: 3px;
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.5rem;
+  padding: 0.2rem 0.45rem;
+  text-transform: capitalize;
+}
+
+.status-badge.bg-secondary { background: #6c7589 !important; color: #fff; }
+.status-badge.bg-primary { background: #4a8fd4 !important; color: #fff; }
+.status-badge.bg-success { background: #4a9e6e !important; color: #fff; }
+.status-badge.bg-danger { background: #c45c5c !important; color: #fff; }
+.status-badge.bg-warning { background: #d4a843 !important; color: #1c2236 !important; }
+.status-badge.bg-info { background: #5aafc4 !important; color: #1c2236 !important; }
+
+/* Alerts */
+.sketch-alert {
+  background: rgba(42, 49, 73, 0.95);
+  border: 1px solid var(--sketch-border);
+  border-radius: 4px;
+  color: var(--sketch-text);
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+.sketch-alert--danger {
+  border-color: #a44;
+  color: #ffb4b4;
+}
+
+.sketch-alert--warning {
+  border-color: #a86;
+  color: #ffd9a0;
+}
+
+.sketch-alert--info {
+  border-color: #468;
+  color: #b8e0ff;
+}
+
+/* Detail & favorites pages */
+.page-panel {
+  margin: 0 auto;
+  max-width: 960px;
+}
+
+.page-panel__title {
+  color: var(--sketch-text);
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.page-panel__lead {
+  color: var(--sketch-text-muted);
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+.detail-card {
+  background: var(--sketch-panel);
+  border-radius: 4px;
+  padding: 1.25rem;
+}
+
+.detail-card__section {
+  background: var(--sketch-card);
+  border: 1px solid var(--sketch-border);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.detail-card__section h2 {
+  color: var(--sketch-text-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.detail-card__section p {
+  color: var(--sketch-text);
+  font-size: 0.88rem;
+  margin: 0 0 0.35rem;
+}
+
+.back-link {
+  color: var(--sketch-link);
+  display: inline-block;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #8fd4ff;
+}
+
+@media (max-width: 768px) {
+  .search-layout {
+    flex-direction: column;
+  }
+
+  .search-layout__sidebar {
+    flex: none;
+    max-width: none;
+    width: 100%;
+  }
+
+  .sketch-header__inner {
+    flex-wrap: wrap;
+  }
 }

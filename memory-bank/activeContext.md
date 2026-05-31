@@ -1,22 +1,21 @@
 # Active Context
 
-**Última sesión:** 2026-05-26
+**Última sesión:** 2026-05-30
 
 ## Foco actual
 
-- Mapa Leaflet interactivo con ruta del vuelo (origen → destino).
-- Popup informativo en aeropuerto de salida con terminal, puerta y hora.
-- Posición en vivo del avión cuando la API la proporciona.
-- Actualización de documentación (prompts, memory-bank, README).
+- **UI según sketch wireframe**: tema oscuro, sidebar de filtros, panel de resultados apilados.
+- Formulario con dropdowns (origen, destino, vuelo) alimentados por API.
+- Mapa Leaflet en vista de detalle.
 
 ## Cambios recientes
 
-- Nuevo componente `FlightMap.vue` con Leaflet + OpenStreetMap.
-- Nuevas funciones en `aviationstack.js`: `fetchFlightByIata()`, `fetchAirportCoords()`.
-- `FlightDetailView.vue`: integración del mapa, carga de coordenadas de aeropuertos, botón de refresco de posición.
-- Dependencia `leaflet` añadida a `package.json`.
-- README actualizado con nuevas funcionalidades.
-- `prompts/004-mapa-interactivo-leaflet.md` registrado.
+- Rediseño visual completo alineado con wireframe del lab:
+  - Header «Rastreador de vuelos» + nav Buscar/Guardados.
+  - Layout sidebar + panel principal en `HomeView`.
+  - Tarjetas de resultado con acciones Detalles (azul) y Guardar (naranja).
+  - Variables CSS `--sketch-*` en `main.css`.
+- `prompts/006-ui-sketch-wireframe.md` registrado.
 - Memory bank actualizado.
 
 ## Próximos pasos

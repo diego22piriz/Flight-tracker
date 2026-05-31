@@ -6,6 +6,8 @@
 - [x] Vue 3 + Bootstrap 5 + Vue Router (3 rutas)
 - [x] Integración AviationStack (`searchFlights`, proxy Vite/nginx)
 - [x] Dropdown de números de vuelo (`listFlightOptions`)
+- [x] Dropdown de aeropuertos origen/destino (`listAirportOptions`)
+- [x] UI según sketch wireframe (tema oscuro, sidebar, tarjetas apiladas)
 - [x] Favoritos en LocalStorage
 - [x] Detalle de vuelo (sessionStorage + favoritos)
 - [x] Mapa Leaflet con ruta orígen → destino

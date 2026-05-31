@@ -78,7 +78,8 @@ App en http://localhost:8080
 
 ## Funcionalidades
 
-- **Buscar vuelos** por número IATA, origen/destino (códigos IATA) o estado.
+- **Interfaz** según wireframe: tema oscuro, sidebar de filtros, resultados apilados con acciones Detalles/Guardar.
+- **Buscar vuelos** por origen/destino (desplegables), número IATA o estado.
 - **Ver detalle** de salida, llegada, retrasos y posición en vivo (si la API la devuelve).
 - **Mapa interactivo** con ruta del vuelo (origen → destino) usando Leaflet y OpenStreetMap.
 - **Posición en vivo** del avión sobre el mapa cuando la API proporciona datos de seguimiento.
@@ -91,8 +92,8 @@ App en http://localhost:8080
 | Campo | Ejemplo |
 |-------|---------|
 | Nº vuelo IATA | `IB3251` |
-| Origen | `MAD` |
-| Destino | `BCN` |
+| Origen | Elegir `MAD` en el desplegable |
+| Destino | Elegir `BCN` en el desplegable |
 | Estado | `active`, `landed`, `scheduled` |
 
 ## Documentación adicional

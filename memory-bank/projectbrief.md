@@ -6,8 +6,8 @@ Desarrollar una **RIA** de rastreo de vuelos que consuma la API pública **Aviat
 
 ## Alcance funcional
 
-- Buscar vuelos por **origen/destino** (IATA) y **estado**.
-- Seleccionar **número de vuelo** desde un desplegable alimentado por la API (no entrada manual).
+- Buscar vuelos por **origen/destino** (IATA en desplegables) y **estado**.
+- Seleccionar **origen, destino y número de vuelo** desde desplegables alimentados por la API (sin entrada manual).
 - Ver **listado** y **detalle** de vuelo.
 - **Favoritos** persistidos en LocalStorage.
 

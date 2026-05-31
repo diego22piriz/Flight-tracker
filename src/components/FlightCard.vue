@@ -1,62 +1,41 @@
 <template>
-  <div class="card flight-card shadow-sm border-0 h-100">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
-        <div>
-          <h3 class="h5 mb-1">
-            {{ flight.airline?.name || 'Aerolínea' }}
-            <span class="text-muted fw-normal">· {{ flightLabel }}</span>
-          </h3>
-          <p class="text-muted small mb-0">{{ flight.flight_date }}</p>
-        </div>
-        <span class="badge status-badge" :class="statusBadgeClass(flight.flight_status)">
-          {{ flight.flight_status || 'desconocido' }}
-        </span>
-      </div>
-
-      <div class="row g-3 mt-1">
-        <div class="col-sm-6">
-          <p class="small text-uppercase text-muted mb-1">Salida</p>
-          <p class="mb-0 fw-semibold">{{ flight.departure?.iata || '—' }}</p>
-          <p class="small mb-0">{{ flight.departure?.airport }}</p>
-          <p class="small text-muted mb-0">
-            Programada: {{ formatDateTime(flight.departure?.scheduled) }}
-          </p>
-          <p v-if="flight.departure?.actual" class="small text-success mb-0">
-            Real: {{ formatDateTime(flight.departure?.actual) }}
-          </p>
-        </div>
-        <div class="col-sm-6">
-          <p class="small text-uppercase text-muted mb-1">Llegada</p>
-          <p class="mb-0 fw-semibold">{{ flight.arrival?.iata || '—' }}</p>
-          <p class="small mb-0">{{ flight.arrival?.airport }}</p>
-          <p class="small text-muted mb-0">
-            Programada: {{ formatDateTime(flight.arrival?.scheduled) }}
-          </p>
-          <p v-if="flight.arrival?.actual" class="small text-success mb-0">
-            Real: {{ formatDateTime(flight.arrival?.actual) }}
-          </p>
-        </div>
-      </div>
+  <article class="flight-card">
+    <div class="flight-card__body">
+      <span class="badge status-badge" :class="statusBadgeClass(flight.flight_status)">
+        {{ flight.flight_status || 'desconocido' }}
+      </span>
+      <h3 class="flight-card__title">
+        {{ flightLabel }}
+      </h3>
+      <p class="flight-card__subtitle">
+        {{ flight.airline?.name || 'Aerolínea' }} · {{ flight.flight_date }}
+      </p>
+      <p class="flight-card__route">
+        {{ flight.departure?.iata || '—' }} → {{ flight.arrival?.iata || '—' }}
+      </p>
+      <p class="flight-card__meta">
+        Salida {{ formatDateTime(flight.departure?.scheduled) }}
+        · Llegada {{ formatDateTime(flight.arrival?.scheduled) }}
+      </p>
     </div>
-    <div class="card-footer bg-white border-0 d-flex flex-wrap gap-2 pb-3">
+    <footer class="flight-card__footer">
       <router-link
-        class="btn btn-sm btn-outline-primary"
+        class="flight-card__action flight-card__action--details"
         :to="{ name: 'flight-detail', params: { flightKey: key } }"
         @click="saveForDetail"
       >
-        Ver detalle
+        Detalles
       </router-link>
       <button
         type="button"
-        class="btn btn-sm"
-        :class="favorite ? 'btn-warning' : 'btn-outline-warning'"
+        class="flight-card__action flight-card__action--save"
+        :class="{ 'flight-card__action--saved': favorite }"
         @click="onToggleFavorite"
       >
-        {{ favorite ? '★ En favoritos' : '☆ Guardar' }}
+        {{ favorite ? 'Guardado' : 'Guardar' }}
       </button>
-    </div>
-  </div>
+    </footer>
+  </article>
 </template>
 
 <script setup>
@@ -70,11 +49,12 @@ import { isFavorite, toggleFavorite } from '../services/favorites.js'
 
 const props = defineProps({
   flight: { type: Object, required: true },
+  index: { type: Number, default: 0 },
 })
 
 const key = computed(() => flightKey(props.flight))
 const flightLabel = computed(
-  () => props.flight.flight?.iata || props.flight.flight?.number || '—',
+  () => props.flight.flight?.iata || props.flight.flight?.number || `Resultado ${props.index}`,
 )
 const favorite = computed(() => isFavorite(props.flight))
 

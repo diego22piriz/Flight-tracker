@@ -13,16 +13,18 @@ Consultar el **estado en tiempo real** de vuelos comerciales sin instalar apps p
 
 | Paso | Acción |
 |------|--------|
-| 1 | Entrar en la página principal |
-| 2 | Indicar aeropuertos origen y/o destino (ej. MAD, BCN) |
-| 3 | Abrir desplegable y elegir un vuelo de la lista |
-| 4 | Buscar y revisar tarjetas de resultados |
-| 5 | Ver detalle con mapa de ruta, popup de salida y (si disponible) posición en vivo |
-| 6 | Consultar favoritos en `/favoritos` |
+| 1 | Entrar en la página principal (layout sidebar + resultados) |
+| 2 | Elegir aeropuertos origen y/o destino en desplegables del panel izquierdo |
+| 3 | Abrir desplegable de N° vuelo y elegir un vuelo |
+| 4 | Pulsar Buscar; revisar tarjetas apiladas a la derecha |
+| 5 | «Detalles» (azul) abre vista con mapa; «Guardar» (naranja) añade a favoritos |
+| 6 | Consultar guardados en `/favoritos` (nav «Guardados») |
 
 ## Mensajes y estados UI
 
-- Dropdown deshabilitado hasta tener origen o destino (≥3 caracteres IATA).
+- Dropdown de vuelos deshabilitado hasta seleccionar origen y/o destino.
+- Dropdowns de aeropuertos se cargan al montar el formulario.
+- Paleta oscura del sketch; acciones «Detalles» (azul claro) y «Guardar» (naranja).
 - Placeholders: «Cargando vuelos…», «Sin vuelos en esta ruta», errores de API en rojo.
 - Badges de estado: programado, en vuelo, aterrizado, cancelado (Bootstrap).
 

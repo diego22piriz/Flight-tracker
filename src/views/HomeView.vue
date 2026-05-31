@@ -1,29 +1,25 @@
 <template>
-  <div class="container">
-    <div class="row mb-4">
-      <div class="col-lg-8">
-        <h1 class="display-6 fw-bold mb-2">Rastreador de vuelos</h1>
-        <p class="lead text-muted mb-0">
-          Consulta vuelos en tiempo real con la API pública
-          <strong>AviationStack</strong>. Sin backend propio: solo frontend y
-          <code>LocalStorage</code> para favoritos.
-        </p>
+  <div class="search-layout">
+    <aside class="search-layout__sidebar">
+      <div class="sketch-panel">
+        <FlightSearchForm :loading="loading" @search="handleSearch" />
       </div>
-    </div>
+    </aside>
 
-    <FlightSearchForm :loading="loading" @search="handleSearch" />
+    <section class="search-layout__main">
+      <AlertMessage :message="error" />
+      <AlertMessage
+        v-if="!hasApiKey"
+        variant="warning"
+        message="Configura VITE_AVIATIONSTACK_API_KEY en el archivo .env (copia .env.example)."
+      />
 
-    <AlertMessage class="mt-3" :message="error" />
-    <AlertMessage
-      v-if="!hasApiKey"
-      class="mt-3"
-      variant="warning"
-      message="Configura VITE_AVIATIONSTACK_API_KEY en el archivo .env (copia .env.example)."
-    />
-
-    <section v-if="flights.length" class="mt-4">
-      <h2 class="h5 mb-3">Resultados ({{ flights.length }})</h2>
-      <FlightList :flights="flights" :searched="searched" />
+      <div class="sketch-panel sketch-panel--results">
+        <h2 v-if="flights.length" class="sketch-panel__title">
+          Resultados ({{ flights.length }})
+        </h2>
+        <FlightList :flights="flights" :searched="searched" :loading="loading" />
+      </div>
     </section>
   </div>
 </template>

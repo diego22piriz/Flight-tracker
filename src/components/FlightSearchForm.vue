@@ -1,96 +1,104 @@
 <template>
-  <form class="card shadow-sm border-0" @submit.prevent="onSubmit">
-    <div class="card-body">
-      <h2 class="h5 card-title mb-3">Buscar vuelos en tiempo real</h2>
-      <div class="row g-3">
-        <div class="col-md-3">
-          <label class="form-label" for="depIata">Origen (IATA)</label>
-          <input
-            id="depIata"
-            v-model="form.depIata"
-            type="text"
-            class="form-control text-uppercase"
-            placeholder="MAD"
-            maxlength="3"
-            @input="onRouteChange"
-          />
-        </div>
-        <div class="col-md-3">
-          <label class="form-label" for="arrIata">Destino (IATA)</label>
-          <input
-            id="arrIata"
-            v-model="form.arrIata"
-            type="text"
-            class="form-control text-uppercase"
-            placeholder="BCN"
-            maxlength="3"
-            @input="onRouteChange"
-          />
-        </div>
-        <div class="col-md-4">
-          <label class="form-label" for="flightIata">Nº vuelo (IATA)</label>
-          <select
-            id="flightIata"
-            v-model="form.flightIata"
-            class="form-select"
-            :disabled="loading || loadingFlights || !canLoadFlights"
-            @focus="loadFlightOptions"
-            @click="loadFlightOptions"
-          >
-            <option value="">{{ selectPlaceholder }}</option>
-            <option v-for="opt in flightOptions" :key="opt.value" :value="opt.value">
-              {{ opt.label }}
-            </option>
-          </select>
-          <div v-if="flightsLoadError" class="form-text text-danger">{{ flightsLoadError }}</div>
-          <div v-else-if="!canLoadFlights" class="form-text">
-            Escribe origen y/o destino para ver vuelos disponibles.
-          </div>
-          <div v-else-if="flightOptions.length === 0 && optionsLoaded" class="form-text">
-            No hay vuelos para esa ruta. Prueba otros aeropuertos.
-          </div>
-        </div>
-        <div class="col-md-2">
-          <label class="form-label" for="status">Estado</label>
-          <select
-            id="status"
-            v-model="form.flightStatus"
-            class="form-select"
-            @change="onRouteChange"
-          >
-            <option value="">Cualquiera</option>
-            <option value="scheduled">Programado</option>
-            <option value="active">En vuelo</option>
-            <option value="landed">Aterrizado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        </div>
-      </div>
-      <div class="d-flex flex-wrap gap-2 mt-3">
-        <button type="submit" class="btn btn-primary" :disabled="loading || loadingFlights">
-          <span v-if="loading" class="spinner-border spinner-border-sm me-1" role="status" />
-          Buscar
-        </button>
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          :disabled="loading || loadingFlights"
-          @click="reset"
+  <form class="sketch-form" @submit.prevent="onSubmit">
+    <div class="sketch-form__row">
+      <div class="sketch-form__field">
+        <label class="sketch-form__label" for="depIata">Origen</label>
+        <select
+          id="depIata"
+          v-model="form.depIata"
+          class="sketch-form__control"
+          :disabled="loadingAirports"
+          @change="onRouteChange"
         >
-          Limpiar
-        </button>
+          <option value="">{{ originPlaceholder }}</option>
+          <option v-for="opt in airportOptions" :key="'dep-' + opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
       </div>
-      <p class="form-text mb-0 mt-2">
-        Elige origen/destino y abre el desplegable de vuelos para cargar números desde la API.
-        Requiere API key en <code>.env</code>.
+      <div class="sketch-form__field">
+        <label class="sketch-form__label" for="arrIata">Destino</label>
+        <select
+          id="arrIata"
+          v-model="form.arrIata"
+          class="sketch-form__control"
+          :disabled="loadingAirports"
+          @change="onRouteChange"
+        >
+          <option value="">{{ destinationPlaceholder }}</option>
+          <option v-for="opt in airportOptions" :key="'arr-' + opt.value" :value="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div v-if="airportsLoadError" class="sketch-form__hint sketch-form__hint--error">
+      {{ airportsLoadError }}
+    </div>
+
+    <div class="sketch-form__field">
+      <label class="sketch-form__label" for="flightIata">N° vuelo</label>
+      <select
+        id="flightIata"
+        v-model="form.flightIata"
+        class="sketch-form__control"
+        :disabled="loading || loadingFlights || !canLoadFlights"
+        @focus="loadFlightOptions"
+        @click="loadFlightOptions"
+      >
+        <option value="">{{ selectPlaceholder }}</option>
+        <option v-for="opt in flightOptions" :key="opt.value" :value="opt.value">
+          {{ opt.label }}
+        </option>
+      </select>
+      <p v-if="flightsLoadError" class="sketch-form__hint sketch-form__hint--error">
+        {{ flightsLoadError }}
       </p>
+      <p v-else-if="!canLoadFlights" class="sketch-form__hint">
+        Selecciona origen y/o destino para ver vuelos disponibles.
+      </p>
+      <p v-else-if="flightOptions.length === 0 && optionsLoaded" class="sketch-form__hint">
+        No hay vuelos para esa ruta. Prueba otros aeropuertos.
+      </p>
+    </div>
+
+    <div class="sketch-form__field">
+      <label class="sketch-form__label" for="status">Estado</label>
+      <select
+        id="status"
+        v-model="form.flightStatus"
+        class="sketch-form__control"
+        @change="onRouteChange"
+      >
+        <option value="">Cualquiera</option>
+        <option value="scheduled">Programado</option>
+        <option value="active">En vuelo</option>
+        <option value="landed">Aterrizado</option>
+        <option value="cancelled">Cancelado</option>
+      </select>
+    </div>
+
+    <div class="sketch-form__actions">
+      <button type="submit" class="sketch-btn sketch-btn--primary" :disabled="loading || loadingFlights">
+        <span v-if="loading" class="spinner-border spinner-border-sm me-1" role="status" />
+        Buscar
+      </button>
+      <button
+        type="button"
+        class="sketch-btn sketch-btn--ghost"
+        :disabled="loading || loadingFlights"
+        @click="reset"
+      >
+        Limpiar
+      </button>
     </div>
   </form>
 </template>
 
 <script setup>
-import { computed, reactive, ref } from 'vue'
-import { listFlightOptions } from '../services/aviationstack.js'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { listAirportOptions, listFlightOptions } from '../services/aviationstack.js'
 
 defineProps({
   loading: { type: Boolean, default: false },
@@ -105,15 +113,27 @@ const form = reactive({
   flightStatus: '',
 })
 
+const airportOptions = ref([])
+const loadingAirports = ref(false)
+const airportsLoadError = ref('')
+
 const flightOptions = ref([])
 const loadingFlights = ref(false)
 const flightsLoadError = ref('')
 const optionsLoaded = ref(false)
 const lastOptionsKey = ref('')
 
-const canLoadFlights = computed(
-  () => form.depIata.trim().length >= 3 || form.arrIata.trim().length >= 3,
-)
+const canLoadFlights = computed(() => !!form.depIata || !!form.arrIata)
+
+const originPlaceholder = computed(() => {
+  if (loadingAirports.value) return 'Cargando…'
+  return 'Selecciona'
+})
+
+const destinationPlaceholder = computed(() => {
+  if (loadingAirports.value) return 'Cargando…'
+  return 'Selecciona'
+})
 
 const selectPlaceholder = computed(() => {
   if (!canLoadFlights.value) return 'Primero origen o destino'
@@ -126,6 +146,21 @@ function optionsCacheKey() {
   return `${form.depIata}|${form.arrIata}|${form.flightStatus}`.toUpperCase()
 }
 
+async function loadAirportOptions() {
+  if (loadingAirports.value || airportOptions.value.length > 0) return
+
+  loadingAirports.value = true
+  airportsLoadError.value = ''
+
+  try {
+    airportOptions.value = await listAirportOptions()
+  } catch (err) {
+    airportsLoadError.value = err.message || 'No se pudieron cargar los aeropuertos.'
+  } finally {
+    loadingAirports.value = false
+  }
+}
+
 function onRouteChange() {
   form.flightIata = ''
   flightOptions.value = []
@@ -133,6 +168,10 @@ function onRouteChange() {
   flightsLoadError.value = ''
   lastOptionsKey.value = ''
 }
+
+onMounted(() => {
+  loadAirportOptions()
+})
 
 async function loadFlightOptions() {
   if (!canLoadFlights.value || loadingFlights.value) return

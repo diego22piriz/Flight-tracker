@@ -1,25 +1,29 @@
 <template>
-  <div class="container">
-    <h1 class="display-6 fw-bold mb-2">Mis vuelos favoritos</h1>
-    <p class="text-muted mb-4">
-      Guardados en <code>LocalStorage</code> del navegador. No se usa base de datos en servidor.
+  <div class="page-panel">
+    <h1 class="page-panel__title">Guardados</h1>
+    <p class="page-panel__lead">
+      Vuelos guardados en el navegador. No se usa base de datos en servidor.
     </p>
 
-    <div v-if="!items.length" class="alert alert-secondary" role="alert">
-      Aún no tienes favoritos. Busca un vuelo y pulsa «Guardar».
-      <router-link to="/" class="alert-link ms-1">Ir a buscar</router-link>
+    <div v-if="!items.length" class="sketch-panel results-empty">
+      Aún no tienes vuelos guardados. Busca un vuelo y pulsa «Guardar».
+      <router-link to="/" class="flight-card__action flight-card__action--details ms-1">
+        Ir a buscar
+      </router-link>
     </div>
 
-    <div v-else class="row g-3">
-      <div v-for="item in items" :key="item.key" class="col-md-6 col-xl-4">
-        <FlightCard :flight="item.flight" />
-        <button
-          type="button"
-          class="btn btn-sm btn-link text-danger mt-1"
-          @click="remove(item.key)"
-        >
-          Quitar de favoritos
-        </button>
+    <div v-else class="sketch-panel">
+      <div class="results-stack">
+        <div v-for="(item, index) in items" :key="item.key">
+          <FlightCard :flight="item.flight" :index="index + 1" />
+          <button
+            type="button"
+            class="flight-card__action flight-card__action--save mt-2"
+            @click="remove(item.key)"
+          >
+            Quitar de guardados
+          </button>
+        </div>
       </div>
     </div>
   </div>

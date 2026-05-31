@@ -1,11 +1,13 @@
 <template>
-  <div v-if="flights.length" class="row g-3">
-    <div v-for="flight in flights" :key="flightKey(flight)" class="col-md-6 col-xl-4">
-      <FlightCard :flight="flight" />
-    </div>
+  <div v-if="loading" class="results-empty">Buscando vuelos…</div>
+  <div v-else-if="flights.length" class="results-stack">
+    <FlightCard v-for="(flight, index) in flights" :key="flightKey(flight)" :flight="flight" :index="index + 1" />
   </div>
-  <div v-else-if="searched" class="alert alert-info" role="alert">
+  <div v-else-if="searched" class="results-empty">
     No se encontraron vuelos con esos criterios.
+  </div>
+  <div v-else class="results-empty">
+    Usa los filtros de la izquierda y pulsa Buscar para ver resultados.
   </div>
 </template>
 
@@ -16,5 +18,6 @@ import { flightKey } from '../services/aviationstack.js'
 defineProps({
   flights: { type: Array, default: () => [] },
   searched: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
 })
 </script>

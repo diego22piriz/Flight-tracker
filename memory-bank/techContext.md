@@ -6,7 +6,7 @@
 |------|------------|--------|
 | Frontend | Vue 3.5 + Composition API | `<script setup>` |
 | Routing | Vue Router 4 | History mode |
-| UI | Bootstrap 5.3 | CSS + bundle JS |
+| UI | Bootstrap 5.3 + tema sketch custom (`main.css`) | Grid/utilidades Bootstrap; colores propios `--sketch-*` |
 | Mapas | Leaflet 1.9 + OpenStreetMap | Sin wrapper Vue, integración directa |
 | Build | Vite 6 | Proxy dev para API |
 | API | AviationStack REST | Plan free, HTTP |
@@ -18,6 +18,7 @@
 ```javascript
 // aviationstack.js
 searchFlights(filters)          // búsqueda principal
+listAirportOptions()            // dropdown origen/destino (caché sesión)
 listFlightOptions(filters)      // dropdown de vuelos
 fetchFlightByIata(iata)         // datos frescos + live position
 fetchAirportCoords(iata)        // coordenadas de aeropuertos (con caché)

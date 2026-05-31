@@ -1,6 +1,6 @@
 # 00 — Memory Bank · Flight-tracker / RastreadorDeeVuelosLab2
 
-> Documento maestro de contexto (requisito del lab). Última actualización: 2026-05-26.
+> Documento maestro de contexto (requisito del lab). Última actualización: 2026-05-30.
 
 ## Resumen del proyecto
 
@@ -32,7 +32,7 @@
 src/
   components/   AppNavbar, FlightSearchForm, FlightCard, FlightList, AlertMessage, FlightMap
   views/        HomeView, FavoritesView, FlightDetailView
-  services/     aviationstack.js (searchFlights, listFlightOptions, fetchFlightByIata, fetchAirportCoords), favorites.js
+  services/     aviationstack.js (searchFlights, listAirportOptions, listFlightOptions, fetchFlightByIata, fetchAirportCoords), favorites.js
   router/       index.js
 tests/          Vitest
 docker/         Dockerfile + nginx
@@ -46,7 +46,8 @@ memory-bank/    Contexto extendido por archivo
 | Función | Endpoint / uso |
 |---------|------------------|
 | `searchFlights()` | `GET /flights` con filtros (vuelo, origen, destino, estado) |
-| `listFlightOptions()` | `GET /flights` por ruta → opciones para dropdown |
+| `listAirportOptions()` | `GET /airports` → opciones para dropdown origen/destino (caché sesión) |
+| `listFlightOptions()` | `GET /flights` por ruta → opciones para dropdown de vuelo |
 | `fetchFlightByIata()` | `GET /flights` con `flight_iata` → datos frescos + live |
 | `fetchAirportCoords()` | `GET /airports` con `iata_code` → coordenadas (con caché) |
 
@@ -59,10 +60,15 @@ memory-bank/    Contexto extendido por archivo
 
 ## UX del formulario de búsqueda
 
-1. Usuario ingresa **origen** y/o **destino** (IATA, 3 letras).
-2. Al abrir el **dropdown de nº vuelo**, se llama `listFlightOptions()` y se muestran códigos tipo `IB3251 — MAD → BCN · Iberia`.
-3. Cambiar ruta o estado **resetea** el dropdown y la caché de opciones.
-4. **Buscar** envía filtros a `searchFlights()` (vuelo opcional + ruta/estado).
+**Layout:** sidebar izquierdo (filtros) + panel derecho (resultados apilados), según wireframe del lab.
+
+1. Al cargar el formulario se llama `listAirportOptions()` y se rellenan los desplegables de **origen** y **destino**.
+2. Usuario elige origen y/o destino en los `<select>` del panel gris izquierdo.
+3. Al abrir el **dropdown de nº vuelo**, se llama `listFlightOptions()` y se muestran códigos tipo `IB3251 — MAD → BCN · Iberia`.
+4. Cambiar ruta o estado **resetea** el dropdown de vuelos y su caché.
+5. **Buscar** envía filtros a `searchFlights()`; las tarjetas aparecen apiladas en el panel derecho con acciones **Detalles** (azul) y **Guardar** (naranja).
+
+**Tema visual:** variables `--sketch-*` en `src/assets/main.css` (fondo oscuro, paneles grises, tarjetas navy).
 
 ## Variables de entorno
 
@@ -77,7 +83,8 @@ Plantilla: `.env.example` (nunca commitear `.env`).
 | Área | Estado |
 |------|--------|
 | App Vue 3 + Bootstrap | ✅ |
-| Dropdown vuelos desde API | ✅ |
+| Dropdown aeropuertos + vuelos desde API | ✅ |
+| UI sketch wireframe (sidebar + tarjetas) | ✅ |
 | Favoritos LocalStorage | ✅ |
 | Detalle vuelo | ✅ |
 | Mapa interactivo Leaflet (ruta + popup salida) | ✅ |
